@@ -14,7 +14,7 @@ def tracking2d(points, max_linking_distance, max_gap_closing, min_len=None, scal
     tracks, adjacency_tracks = simple_tracker(points, max_linking_distance, max_gap_closing)
     
     all_points = np.vstack(points)
-    points = [p if len(p.shape) != 1 else p[None, :] for p in points] # add dimension for single point frames
+    points = [p[None, :] if len(p.shape) == 1 else p for p in points] # add dimension for single point frames
     all_points_fidx = np.vstack([np.hstack([f, i*np.ones([len(f), 1])]) for i, f in enumerate(points)])
 
     track_id_limit = all_points_fidx.shape[0]
