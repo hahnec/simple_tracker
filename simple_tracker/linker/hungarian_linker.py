@@ -7,11 +7,15 @@ from munkres import Munkres
 
 def hungarian_linker(source, target, max_distance: float = np.inf, method: str = 'scipy'):
 
-    n_source_points = source.shape[0]
+    if len(source.shape) == 1:
+        n_source_points = 1
+        source = source[None, :]
+    else:
+        n_source_points = source.shape[0]
     n_target_points = target.shape[0]
     
     cost_mat = np.ones([n_source_points, n_target_points]) * np.nan
-    
+
     # build cost matrix
     for i in range(n_source_points):
         
