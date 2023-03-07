@@ -16,15 +16,16 @@ def tracking2d(points, max_linking_distance, max_gap_closing, min_len=None, scal
     all_points = np.vstack(points)
     points = [p[None, :] if len(p.shape) == 1 else p for p in points] # add dimension for single point frames
     all_points_fidx = np.vstack([np.hstack([f, i*np.ones([len(f), 1])]) for i, f in enumerate(points)])
-
+    
+    # tracks vs points consistency check-up
     track_id_limit = all_points_fidx.shape[0]
+    max_tracks = max([max(tracks) for tracks in adjacency_tracks])
+    assert max_tracks == track_id_limit-1, 'number of tracks exceeds number of points'
 
     count=0
     tracks_raw = []
     for i in range(len(tracks)):
         track_id = adjacency_tracks[i]
-        if not np.all(track_id < track_id_limit):
-            continue
         frame_id = all_points_fidx[track_id, 2].astype(int)   # get frame number of track id
         track_points = np.hstack([all_points_fidx[track_id, :2], frame_id[:, None]])#np.vstack([all_points[track_id, :], idFrame])#np.hstack(all_points[track_id, :], idFrame)
         if len(track_points[:, 0]) > min_len:
