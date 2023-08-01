@@ -1,8 +1,5 @@
 import numpy as np
 import numpy.matlib
-from scipy.optimize import linear_sum_assignment
-from lapsolver import solve_dense
-from munkres import Munkres
 
 
 def hungarian_linker(source, target, max_distance: float = np.inf, method: str = 'scipy'):
@@ -37,10 +34,13 @@ def hungarian_linker(source, target, max_distance: float = np.inf, method: str =
     
     # find assignment
     if method == 'lapsolver':
+        from lapsolver import solve_dense
         _, target_indices = solve_dense(cost_mat)
     elif method == 'scipy':
+        from scipy.optimize import linear_sum_assignment
         _, target_indices = linear_sum_assignment(cost_mat)
     elif method == 'munkres':
+        from munkres import Munkres
         _, target_indices = [np.array(el) for el in list(zip(*Munkres().compute(cost_mat.tolist())))]
 
     # set unmatched sources to -1
