@@ -42,10 +42,10 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
         fps = 1000
 
         # render based on Hungarian linker
-        #tracks = [f / wavelength for f in tracks]
         tracks, tracks_interp = tracking2d(tracks, max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode='interp')
-        #tracks = [np.hstack([p[:, :2] - origin[:2], p[:, 2:]]) for p in tracks]
-        img, vel = tracks2img(tracks, img_size=size, scale=10, mode='tracks')#velnorm')
+
+        # recursive function call
+        img, vel = tracks2img(tracks, img_size=img_size, scale=10, mode='all_in')
 
     elif mode in ['vel_z', 'velnorm', 'velmean']:
 
