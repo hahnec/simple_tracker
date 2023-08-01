@@ -15,6 +15,9 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
     vel = np.zeros(np.array(img_size)*scale)
 
     if mode == 'all_in':
+        
+        # unravel list to numpy array
+        all_pts = np.vstack(all_pts) if isinstance(all_pts, (list, tuple)) else all_pts
 
         # get integer image coordinates
         coords = np.round(tracks*scale).astype('int')
