@@ -17,10 +17,10 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
     if mode == 'all_in':
         
         # unravel list to numpy array
-        all_pts = np.vstack(tracks) if isinstance(tracks, (list, tuple)) else tracks
+        coords = np.vstack(tracks) if isinstance(tracks, (list, tuple)) else tracks
 
         # get integer image coordinates
-        coords = np.round(tracks*scale).astype('int')
+        coords = np.round(coords*scale).astype('int')
 
         # remove out-of-grid bubbles (ie. the grid is too small)
         valid = (0 < coords[:, 0]) & (coords[:, 0] < img_size[1]*scale) & (0 < coords[:, 1]) & (coords[:, 1] < img_size[0]*scale)
