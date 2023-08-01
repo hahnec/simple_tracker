@@ -45,7 +45,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
         tracks, tracks_interp = tracking2d(tracks, max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode='interp')
 
         # recursive function call
-        img, vel = tracks2img(tracks, img_size=img_size, scale=10, mode='all_in')
+        img, vel = tracks2img(tracks, img_size=img_size, scale=scale, mode='all_in')
 
     elif mode in ['vel_z', 'velnorm', 'velmean']:
 
