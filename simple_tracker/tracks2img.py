@@ -41,11 +41,15 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
         max_gap_closing = 0
         fps = 1000
 
-        # render based on Hungarian linker
-        tracks, tracks_interp = tracking2d(tracks, max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode='interp')
+        tracks_result = []
+        # split tracks into chunks
+        for idx in range(len(tracks)//fps):
+            # render based on Hungarian linker
+            result, result_interp = tracking2d(tracks[idx*fps:(idx+1)*fps], max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode='interp')
+            tracks_result.extend(result)
 
         # recursive function call
-        img, vel = tracks2img(tracks, img_size=img_size, scale=scale, mode='all_in')
+        img, vel = tracks2img(tracks_result, img_size=img_size, scale=scale, mode='all_in')
 
     elif mode in ['vel_z', 'velnorm', 'velmean']:
 
