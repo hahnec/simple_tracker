@@ -4,7 +4,7 @@ from scipy.ndimage import uniform_filter1d
 from .tracking2d import tracking2d
 
 
-def tracks2img(tracks, img_size, scale=1, mode=None):
+def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
 
     if mode is None:
         if isinstance(tracks, np.ndarray):
@@ -39,7 +39,6 @@ def tracks2img(tracks, img_size, scale=1, mode=None):
         min_len = 15
         max_linking_distance = 2
         max_gap_closing = 0
-        fps = 1000
 
         tracks_result = []
         # split tracks into chunks
