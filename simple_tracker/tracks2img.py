@@ -19,7 +19,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
     if mode == 'all_in':
         
         # unravel list to numpy array
-        coords = np.vstack(tracks) if isinstance(tracks, (list, tuple)) else tracks
+        coords = np.vstack(tracks)[:, :2] if isinstance(tracks, (list, tuple)) else tracks
 
         # get integer image coordinates
         coords = np.round(coords*scale).astype('int')
