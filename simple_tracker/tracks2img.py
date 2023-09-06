@@ -33,8 +33,10 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
         if mode == 'amplitude':
             amplitudes = np.vstack(tracks)[:, -1]
             merged_amplitudes = []
-            for idx in idcs.T:
-                merged_amplitudes.append(np.mean(amplitudes[valid][idx]))
+            for i, idx in enumerate(idcs.T):
+                mask = np.sum((coords[valid]==idx), 1) == 2
+                assert sum(mask) == count[i]
+                merged_amplitudes.append(np.mean(amplitudes[valid][mask]))
             merged_amplitudes = np.array(merged_amplitudes)
             merged_amplitudes = (merged_amplitudes - min(merged_amplitudes)) / (max(merged_amplitudes) - min(merged_amplitudes))
             #merged_amplitudes = np.round((merged_amplitudes*255)).astype('int')
