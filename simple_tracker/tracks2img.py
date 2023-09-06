@@ -16,7 +16,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
     img = np.zeros(np.array(img_size)*scale)
     vel = np.zeros(np.array(img_size)*scale)
 
-    if mode == 'all_in':
+    if mode in ('all_in', 'amplitude'):
         
         # unravel list to numpy array
         coords = np.vstack(tracks)[:, :2] if isinstance(tracks, (list, tuple)) else tracks[:, :2]
@@ -30,8 +30,17 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
         # get valid indices and number of duplicates (counts)
         idcs, count = np.unique(coords[valid].T, axis=1, return_counts=True)
 
-        # set pixels in image
-        img[idcs[1], idcs[0]] = count
+        if mode == 'amplitude':
+            amplitudes = np.vstack(tracks)[:, -1]
+            merged_amplitudes = []
+            for idx in idcs.T:
+                merged_amplitudes.append(np.mean(amplitudes[valid][idx]))
+
+            # set pixels in image
+            img[idcs[1], idcs[0]] = merged_amplitudes * count
+        else:
+            # set pixels in image
+            img[idcs[1], idcs[0]] = count
 
     elif mode == 'tracks':
 
