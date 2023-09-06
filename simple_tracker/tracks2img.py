@@ -37,7 +37,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
                 merged_amplitudes.append(np.mean(amplitudes[valid][idx]))
 
             # set pixels in image
-            img[idcs[1], idcs[0]] = merged_amplitudes * count
+            img[idcs[1], idcs[0]] = np.array(merged_amplitudes) * count
         else:
             # set pixels in image
             img[idcs[1], idcs[0]] = count
