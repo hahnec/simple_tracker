@@ -62,7 +62,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
             tracks_result.extend(result)
 
         # recursive function call
-        img, vel = tracks2img(tracks_result, img_size=img_size, scale=scale, mode='all_in')
+        img, vel = tracks2img(tracks_result, img_size=img_size, scale=scale, mode=mode)
 
     elif mode in ['vel_z', 'velnorm', 'velmean']:
 
