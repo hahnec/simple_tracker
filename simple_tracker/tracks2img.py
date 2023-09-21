@@ -15,6 +15,13 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
     # init rendered output image
     img = np.zeros(np.array(img_size)*scale)
     vel = np.zeros(np.array(img_size)*scale)
+    
+    # catch case where point array empty
+    if len(tracks) == 0:
+        import warnings
+        warnings.warn('No points to track')
+
+        return img, vel
 
     if mode in ('all_in', 'amplitude'):
         
@@ -47,38 +54,40 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
             # set pixels in image
             img[idcs[1], idcs[0]] = count
 
-    elif mode == 'tracks':
+    elif mode in ('tracks', 'vel_z', 'velnorm', 'velmean'):
 
         # init variables
         min_len = 15
         max_linking_distance = 2
         max_gap_closing = 0
+        interp_mode = 'interp' if mode == 'tracks' else 'velocityinterp'
 
         tracks_result = []
         # split tracks into chunks
         for idx in range(len(tracks)//fps):
             # render based on Hungarian linker
-            result, result_interp = tracking2d(tracks[idx*fps:(idx+1)*fps], max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode='interp')
+            result, result_interp = tracking2d(tracks[idx*fps:(idx+1)*fps], max_linking_distance=max_linking_distance, max_gap_closing=max_gap_closing, min_len=min_len, scale=1/fps, mode=interp_mode)
             tracks_result.extend(result)
 
-        # recursive function call
-        img, vel = tracks2img(tracks_result, img_size=img_size, scale=scale, mode='all_in') if len(tracks_result) > 0 else (img, vel)
+        if mode == 'tracks':
+            # single recursive function call
+            img, vel = tracks2img(tracks_result, img_size=img_size, scale=scale, mode='all_in') if len(tracks_result) > 0 else (img, vel)
 
-    elif mode in ['vel_z', 'velnorm', 'velmean']:
-
-            for i in range(len(tracks)):
+        else:
+            # velocity methods
+            for i in range(len(tracks_result)):
 
                 # get integer image coordinates
-                coords = np.round(tracks[i][:, :2]*scale).astype('int')
+                coords = np.round(tracks_result[i][:, :2]*scale).astype('int')
 
                 if mode == 'velmean':
-                    velnorm = tracks[i][:, 2]
+                    velnorm = tracks_result[i][:, 2]
                 else:
-                    velnorm = uniform_filter1d(np.linalg.norm(tracks[i][:, 2:3], ord=2, axis=1), 10) # velocity is smoothed
+                    velnorm = uniform_filter1d(np.linalg.norm(tracks_result[i][:, 2:3], ord=2, axis=1), 10) # velocity is smoothed
 
                 if mode == 'vel_z':
                     # encode the direction of the velocity in positive/negative value
-                    velnorm = velnorm * np.sign(np.mean(tracks[i][:, 2]))
+                    velnorm = velnorm * np.sign(np.mean(tracks_result[i][:, 2]))
 
                 # remove out of grid bubbles (ie. the grid is too small)
                 valid = (0 < coords[:, 0]) & (coords[:, 0] < img_size[1]*scale) & (0 < coords[:, 1]) & (coords[:, 1] < img_size[0]*scale)
