@@ -87,7 +87,7 @@ def tracks2img(tracks, img_size, scale=1, mode=None, fps = 1000):
 
                 if mode == 'vel_z':
                     # encode the direction of the velocity in positive/negative value
-                    velnorm = velnorm * np.sign(np.mean(tracks_result[i][:, 2]))
+                    velnorm *= np.sign(np.mean(tracks_result[i][:, 2]))
 
                 # remove out of grid bubbles (ie. the grid is too small)
                 valid = (0 < coords[:, 0]) & (coords[:, 0] < img_size[1]*scale) & (0 < coords[:, 1]) & (coords[:, 1] < img_size[0]*scale)
